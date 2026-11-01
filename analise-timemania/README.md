@@ -4,10 +4,16 @@ Análise estatística descritiva da Timemania (Caixa Econômica Federal) sobre o
 **100 concursos mais recentes** (2.362 a 2.461, de 03/03/2026 a 29/10/2026),
 com validação contra o **histórico completo** (2.460 concursos, 2008–2026).
 
-O documento principal é **[`LEVANTAMENTO-TIMEMANIA.md`](LEVANTAMENTO-TIMEMANIA.md)**:
-tabelas de prevalência ≥ 70%, tabela de zebras (< 30%), repetição de dezenas,
-testes de aderência ao sorteio uniforme, frequência e atraso das dezenas,
-Time do Coração e os 100 sorteios listados um a um.
+Documentos:
+
+1. **[`LEVANTAMENTO-TIMEMANIA.md`](LEVANTAMENTO-TIMEMANIA.md)** — levantamento
+   estatístico: prevalência ≥ 70%, zebras (< 30%), repetição de dezenas, testes
+   de aderência ao sorteio uniforme, frequência e atraso das dezenas, Time do
+   Coração e os 100 sorteios listados um a um.
+2. **[`FECHAMENTO-TIMEMANIA.md`](FECHAMENTO-TIMEMANIA.md)** — fechamento
+   matemático v-10-7-7 para v = 20 a 80 dezenas: quantitativo de apostas únicas
+   sem filtro e com filtros, evolução etapa por etapa, custos e limites teóricos
+   de cobertura (Schönheim).
 
 ## Resultado em uma linha
 
@@ -49,6 +55,8 @@ Somente biblioteca padrão do Python 3 (sem dependências):
 cd analise-timemania
 python3 scripts/analise_timemania.py   # métricas + tabelas (dados/metricas.json, dados/tabelas.md, CSV)
 python3 scripts/gerar_relatorio.py     # reescreve LEVANTAMENTO-TIMEMANIA.md
+python3 scripts/fechamento.py          # quantitativos do fechamento (dados/fechamento.json)
+python3 scripts/relatorio_fechamento.py  # reescreve FECHAMENTO-TIMEMANIA.md
 ```
 
 ## Arquivos
@@ -56,8 +64,13 @@ python3 scripts/gerar_relatorio.py     # reescreve LEVANTAMENTO-TIMEMANIA.md
 | Arquivo | Conteúdo |
 |---|---|
 | `LEVANTAMENTO-TIMEMANIA.md` | Relatório completo (documento principal). |
+| `FECHAMENTO-TIMEMANIA.md` | Quantitativo do fechamento 20→80 dezenas, 10 a 10, sem e com filtros. |
 | `scripts/analise_timemania.py` | Carga, validação, 17 variáveis, IC de Wilson, χ² agrupado, hipergeométrico, validação cruzada. |
 | `scripts/gerar_relatorio.py` | Monta o relatório a partir das métricas — texto e tabelas nunca divergem. |
+| `scripts/fechamento.py` | Contagem exata de apostas com filtros (programação dinâmica) e limites de Schönheim/contagem. |
+| `scripts/relatorio_fechamento.py` | Monta `FECHAMENTO-TIMEMANIA.md` a partir de `dados/fechamento.json`. |
+| `filtros-timemania.json` | Premissas fixas usadas em todos os cálculos futuros (jogo, filtros, sorteio de referência). |
+| `dados/fechamento.json` | Quantitativos, mínimos teóricos, funil de filtros e custos. |
 | `dados/timemania_bruto_espelho_caixa.json` | Resultados oficiais espelhados (2.461 concursos). |
 | `dados/timemania_ultimos_100.csv` | Os 100 concursos do recorte com soma, pares, primos, repetidas e time (`;`). |
 | `dados/metricas.json` | Todas as métricas, distribuições e p-valores. |

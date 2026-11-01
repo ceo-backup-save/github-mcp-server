@@ -1,0 +1,302 @@
+{
+ "premissas": {
+  "versao": "2026-11-01",
+  "origem": "Premissas do anexo Timemania + levantamento dos 100 últimos concursos (2362–2461) e histórico completo (2.460)",
+  "jogo": {
+   "modalidade": "Timemania",
+   "universo_dezenas": 80,
+   "dezenas_sorteadas": 7,
+   "dezenas_por_aposta": 10,
+   "aposta_ampliada": false,
+   "preco_aposta": 3.5,
+   "premios_acertos": {
+    "7": "1 em 26.472.637",
+    "6": "1 em 216.103",
+    "5": "1 em 5.220",
+    "4": "1 em 276",
+    "3": "1 em 29"
+   },
+   "time_do_coracao": "ignorado neste estudo (sorteio independente, 1 em 80)"
+  },
+  "filtros_sorteio": {
+   "repeticao_anterior": {
+    "prevalente": [
+     0,
+     1
+    ],
+    "cobertura_pct": 88.7,
+    "zebra": ">=2",
+    "zebra_pct": 9.9,
+    "fonte": "histórico completo: 0=50,5% + 1=38,2%; 2=9,8%; 3=1,4%"
+   },
+   "paridade": {
+    "modal": "4P/3I (29,8%) e 3P/4I (27,7%)",
+    "zebra": "2P/5I (16,3%) e 6P/1I (4,7%)",
+    "fonte": "anexo: 4P/3I 29,7%; 3P/4I 27,7%; 2P/5I 16,4% — confirmado na base"
+   },
+   "faixas_de_10": {
+    "observacao": "distribuição equilibrada (2.074 a 2.218 aparições no histórico)",
+    "fonte": "anexo + levantamento"
+   }
+  },
+  "filtros_aposta_10": {
+   "_nota": "Os filtros do anexo descrevem as 7 dezenas sorteadas; aqui são traduzidos para a aposta de 10 dezenas.",
+   "repeticao_max": 1,
+   "pares_entre": [
+    4,
+    6
+   ],
+   "faixas_ocupadas_entre": [
+    4,
+    6
+   ],
+   "maior_bloco_consecutivo_max": 2
+  },
+  "sorteio_anterior": {
+   "concurso": 2461,
+   "data": "29/10/2026",
+   "dezenas": [
+    2,
+    6,
+    17,
+    39,
+    57,
+    64,
+    71
+   ]
+  },
+  "ordem_dezenas": "frequência histórica decrescente (levantamento completo, 2.460 concursos)"
+ },
+ "universo_dezenas": [
+  21,
+  20,
+  61,
+  70,
+  80,
+  72,
+  66,
+  12,
+  35,
+  71,
+  4,
+  65,
+  39,
+  50,
+  6,
+  11,
+  41,
+  44,
+  57,
+  60,
+  79,
+  13,
+  28,
+  51,
+  48,
+  69,
+  8,
+  26,
+  49,
+  55,
+  56,
+  1,
+  5,
+  40,
+  63,
+  67,
+  3,
+  62,
+  15,
+  23,
+  31,
+  34,
+  14,
+  45,
+  73,
+  10,
+  25,
+  27,
+  52,
+  64,
+  7,
+  33,
+  36,
+  30,
+  32,
+  47,
+  16,
+  19,
+  74,
+  42,
+  17,
+  22,
+  29,
+  77,
+  78,
+  2,
+  18,
+  24,
+  38,
+  75,
+  37,
+  43,
+  68,
+  58,
+  59,
+  76,
+  9,
+  46,
+  54,
+  53
+ ],
+ "anterior": [
+  2,
+  6,
+  17,
+  39,
+  57,
+  64,
+  71
+ ],
+ "tabela": [
+  {
+   "v": 20,
+   "dezenas_no_anterior": 4,
+   "sem_filtro": 184756,
+   "com_filtro": 19868,
+   "reducao_pct": 89.24635735781247,
+   "novas_sem_filtro": 184756,
+   "novas_com_filtro": 19868,
+   "minimo_contagem": 646,
+   "minimo_schoenheim": 744,
+   "cobertura_por_aposta": 120,
+   "p_v_universo": 2.440255604812567e-05,
+   "custo_sem_filtro": 646646.0,
+   "custo_com_filtro": 69538.0,
+   "custo_minimo": 2604.0
+  },
+  {
+   "v": 30,
+   "dezenas_no_anterior": 4,
+   "sem_filtro": 30045015,
+   "com_filtro": 7255940,
+   "reducao_pct": 75.84977075231947,
+   "novas_sem_filtro": 29860259,
+   "novas_com_filtro": 7236072,
+   "minimo_contagem": 16965,
+   "minimo_schoenheim": 16986,
+   "cobertura_por_aposta": 120,
+   "p_v_universo": 0.0006408504076725263,
+   "custo_sem_filtro": 105157552.5,
+   "custo_com_filtro": 25395790.0,
+   "custo_minimo": 59451.0
+  },
+  {
+   "v": 40,
+   "dezenas_no_anterior": 4,
+   "sem_filtro": 847660528,
+   "com_filtro": 259285604,
+   "reducao_pct": 69.41162229037991,
+   "novas_sem_filtro": 817615513,
+   "novas_com_filtro": 252029664,
+   "minimo_contagem": 155363,
+   "minimo_schoenheim": 164512,
+   "cobertura_por_aposta": 120,
+   "p_v_universo": 0.005868814729574223,
+   "custo_sem_filtro": 2966811848.0,
+   "custo_com_filtro": 907499614.0,
+   "custo_minimo": 575792.0
+  },
+  {
+   "v": 50,
+   "dezenas_no_anterior": 5,
+   "sem_filtro": 10272278170,
+   "com_filtro": 3050496332,
+   "reducao_pct": 70.30360469687321,
+   "novas_sem_filtro": 9424617642,
+   "novas_com_filtro": 2791210728,
+   "minimo_contagem": 832370,
+   "minimo_schoenheim": 832510,
+   "cobertura_por_aposta": 120,
+   "p_v_universo": 0.03144265569315536,
+   "custo_sem_filtro": 35952973595.0,
+   "custo_com_filtro": 10676737162.0,
+   "custo_minimo": 2913785.0
+  },
+  {
+   "v": 60,
+   "dezenas_no_anterior": 5,
+   "sem_filtro": 75394027566,
+   "com_filtro": 25257289867,
+   "reducao_pct": 66.49961451536761,
+   "novas_sem_filtro": 65121749396,
+   "novas_com_filtro": 22206793535,
+   "minimo_contagem": 3218391,
+   "minimo_schoenheim": 3339324,
+   "cobertura_por_aposta": 120,
+   "p_v_universo": 0.12157425195399879,
+   "custo_sem_filtro": 263879096481.0,
+   "custo_com_filtro": 88400514534.5,
+   "custo_minimo": 11687634.0
+  },
+  {
+   "v": 70,
+   "dezenas_no_anterior": 7,
+   "sem_filtro": 396704524216,
+   "com_filtro": 123810328042,
+   "reducao_pct": 68.7902908879892,
+   "novas_sem_filtro": 321310496650,
+   "novas_com_filtro": 98553038175,
+   "minimo_contagem": 9989790,
+   "minimo_schoenheim": 9990050,
+   "cobertura_por_aposta": 120,
+   "p_v_universo": 0.3773628391882889,
+   "custo_sem_filtro": 1388465834756.0,
+   "custo_com_filtro": 433336148147.0,
+   "custo_minimo": 34965175.0
+  },
+  {
+   "v": 80,
+   "dezenas_no_anterior": 7,
+   "sem_filtro": 1646492110120,
+   "com_filtro": 535964339184,
+   "reducao_pct": 67.44810765324969,
+   "novas_sem_filtro": 1249787585904,
+   "novas_com_filtro": 412154011142,
+   "minimo_contagem": 26472637,
+   "minimo_schoenheim": 27188152,
+   "cobertura_por_aposta": 120,
+   "p_v_universo": 1.0,
+   "custo_sem_filtro": 5762722385420.0,
+   "custo_com_filtro": 1875875187144.0,
+   "custo_minimo": 95158532.0
+  }
+ ],
+ "funil_20": [
+  {
+   "rotulo": "sem filtro",
+   "apostas": 184756
+  },
+  {
+   "rotulo": "F1 repetição ≤ 1",
+   "apostas": 53768
+  },
+  {
+   "rotulo": "F1 + F2 pares 4–6",
+   "apostas": 37752
+  },
+  {
+   "rotulo": "F1 + F2 + F3 faixas 4–6",
+   "apostas": 21780
+  },
+  {
+   "rotulo": "F1 + F2 + F3 + F4 bloco ≤ 2",
+   "apostas": 19868
+  }
+ ],
+ "probabilidades_sorteio": {
+  "repetidas_0_1_pct": 88.80118401504144,
+  "pares_3_4_pct": 56.846950517836596
+ },
+ "preco_aposta": 3.5
+}

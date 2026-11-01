@@ -1,0 +1,68 @@
+{
+ "versao": "2026-11-01",
+ "origem": "Premissas do anexo Timemania + levantamento dos 100 últimos concursos (2362–2461) e histórico completo (2.460)",
+ "jogo": {
+  "modalidade": "Timemania",
+  "universo_dezenas": 80,
+  "dezenas_sorteadas": 7,
+  "dezenas_por_aposta": 10,
+  "aposta_ampliada": false,
+  "preco_aposta": 3.5,
+  "premios_acertos": {
+   "7": "1 em 26.472.637",
+   "6": "1 em 216.103",
+   "5": "1 em 5.220",
+   "4": "1 em 276",
+   "3": "1 em 29"
+  },
+  "time_do_coracao": "ignorado neste estudo (sorteio independente, 1 em 80)"
+ },
+ "filtros_sorteio": {
+  "repeticao_anterior": {
+   "prevalente": [
+    0,
+    1
+   ],
+   "cobertura_pct": 88.7,
+   "zebra": ">=2",
+   "zebra_pct": 9.9,
+   "fonte": "histórico completo: 0=50,5% + 1=38,2%; 2=9,8%; 3=1,4%"
+  },
+  "paridade": {
+   "modal": "4P/3I (29,8%) e 3P/4I (27,7%)",
+   "zebra": "2P/5I (16,3%) e 6P/1I (4,7%)",
+   "fonte": "anexo: 4P/3I 29,7%; 3P/4I 27,7%; 2P/5I 16,4% — confirmado na base"
+  },
+  "faixas_de_10": {
+   "observacao": "distribuição equilibrada (2.074 a 2.218 aparições no histórico)",
+   "fonte": "anexo + levantamento"
+  }
+ },
+ "filtros_aposta_10": {
+  "_nota": "Os filtros do anexo descrevem as 7 dezenas sorteadas; aqui são traduzidos para a aposta de 10 dezenas.",
+  "repeticao_max": 1,
+  "pares_entre": [
+   4,
+   6
+  ],
+  "faixas_ocupadas_entre": [
+   4,
+   6
+  ],
+  "maior_bloco_consecutivo_max": 2
+ },
+ "sorteio_anterior": {
+  "concurso": 2461,
+  "data": "29/10/2026",
+  "dezenas": [
+   2,
+   6,
+   17,
+   39,
+   57,
+   64,
+   71
+  ]
+ },
+ "ordem_dezenas": "frequência histórica decrescente (levantamento completo, 2.460 concursos)"
+}
