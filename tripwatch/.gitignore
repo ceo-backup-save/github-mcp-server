@@ -1,0 +1,8 @@
+# banco local gerado em tempo de execução
+data/
+# arquivos de ambiente com chaves
+.env
+# bytecode
+__pycache__/
+*.pyc
+tests/__pycache__/
