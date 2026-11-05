@@ -63,7 +63,9 @@ O banco de demonstração é criado automaticamente no primeiro start, com 5 wat
   - gera briefing do dia;
   - entende comandos em português e cria watchlists;
   - usa LLM opcional para linguagem natural.
-- **Servidor MCP** com 12 ferramentas para o Arena/Claude/Cursor usarem o monitoramento.
+- **Servidor MCP** com 14 ferramentas para o Arena/Claude/Cursor usarem o monitoramento.
+- **Catálogo de repositórios** (aba **Repositórios**) com LetsFG, flight-finder, trvl,
+  flightclaw e outros — com estrelas, licença, MCP e comando de instalação.
 - **Provedor real opcional** via SerpAPI (Google Flights + Google Hotels).
 - **Dockerfile** e `run.sh` para deploy 24/7.
 
@@ -242,6 +244,8 @@ npx mcp-remote https://<host-do-preview>/mcp
 | `run_check` | checa um item ou todos |
 | `travel_briefing` | briefing do dia (com `use_llm: true` opcional) |
 | `list_alerts` | alertas recentes |
+| `list_repos` | catálogo de repositórios (LetsFG, flight-finder, trvl…) |
+| `add_repo` | adiciona/atualiza um repositório no catálogo |
 | `update_target` | atualiza o preço-alvo |
 | `delete_watch` | remove um monitoramento |
 | `agent_chat` | conversa com ferramentas em linguagem natural |
@@ -278,6 +282,8 @@ curl -s -X POST http://localhost:8787/mcp \
 | POST | `/api/agent/chat` | chat do agente |
 | GET | `/api/agent/context` | contexto completo para um agente externo |
 | POST | `/api/alerts/read` | marca alerta(s) como lido(s) |
+| GET | `/api/repos` | lista o catálogo de repositórios |
+| POST | `/api/repos` | adiciona/atualiza um repositório |
 | POST | `/api/settings` | atualiza preferências |
 | POST | `/api/reset-demo` | restaura o banco de demonstração |
 | GET | `/api/health` | healthcheck |
@@ -307,6 +313,43 @@ docker run -d --name tripwatch -p 8787:8787 \
 O banco fica em `/data/tripwatch.db` (defina `TRIPWATCH_DB=/data/tripwatch.db`).
 
 ---
+
+## Catálogo de repositórios
+
+A aba **Repositórios** do painel guarda uma curadoria de ferramentas de viagem:
+
+- **LetsFG/LetsFG** — MCP `https://letsfg.co/mcp`, `pip install letsfg`; busca e booking real.
+- **affromero/flight-finder** — self-hosted completo (Next.js + Postgres + Playwright).
+- **borski/travel-hacking-toolkit** — milhas e pontos.
+- **MikkoParkkola/trvl** — MCP local sem API keys (PolyForm NC).
+- **flightclaw/agents**, **jeancsil/flight-spy**, **saraswatayu/swoop**,
+  **mtnrabi/travel-agent-skills**, **ruchirpipalia-spec/travel-agent** e o próprio TripWatch.
+
+A fonte é `catalog.py`; a exportação está em
+[`../docs/catalogo-repositorios.json`](../docs/catalogo-repositorios.json). API:
+`GET/POST /api/repos`. MCP: `list_repos` e `add_repo`.
+
+## Pesquisa de exemplo: THE → POA (29/01 a 01/02/2027)
+
+Com base em referências públicas (Decolar, Momondo, Expedia e guias de hotéis):
+
+- **Voos Teresina → Porto Alegre, ida e volta:** faixa de **R$ 850–1.200** por pessoa;
+  bom preço **≤ R$ 900**. A referência mais próxima das datas é **LATAM 27/01–01/02/2027
+  por R$ 843** (Decolar). Há voos diretos (79 por semana, 2h35), mas a maioria das ofertas
+  aparece com 1 escala.
+- **Hotéis em Porto Alegre, R$ 150–300/diária:** Eko Residence (R$ 151, 8,5), Intercity
+  Aeroporto (R$ 194, 8,5), Hotel Praça da Matriz (R$ 180–260, 8,5), Novotel Três Figueiras
+  (R$ 209–235, 8,8) e Laghetto Viverone (R$ 272, 8,4), entre outros.
+
+Os watchlists correspondentes já estão no banco de demonstração:
+
+- `Teresina → Porto Alegre (29/01–01/02)` — alvo R$ 900;
+- `Eko Residence Hotel`, `Intercity Porto Alegre Aeroporto`, `Hotel Praça da Matriz`,
+  `Novotel Porto Alegre Três Figueiras` e `Hotel Laghetto Viverone Moinhos` — alvo R$ 300.
+
+> Os valores do modo demo são simulados. Para cotação ao vivo, configure `SERPAPI_KEY` ou
+> conecte o MCP do LetsFG. A pesquisa completa, com fontes e ressalvas, está em
+> [`../docs/PESQUISA_THE-POA_2027.md`](../docs/PESQUISA_THE-POA_2027.md).
 
 ## Comparação rápida com repositórios existentes
 

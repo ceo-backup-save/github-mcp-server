@@ -14,6 +14,47 @@ Estrelas, licenças e datas refletem o momento da consulta.
 | **MCP local sem API keys, uso pessoal** | [MikkoParkkola/trvl](https://github.com/MikkoParkkola/trvl) |
 | **Referência de agente com Telegram + SerpAPI + Claude** | [ruchirpipalia-spec/travel-agent](https://github.com/ruchirpipalia-spec/travel-agent) |
 
+## Catálogo estruturado (dentro do TripWatch)
+
+O catálogo deixou de ser só uma tabela no Markdown. Ele agora é uma base consultável:
+
+- **Fonte:** `tripwatch/catalog.py` (10 repositórios).
+- **Exportação:** `docs/catalogo-repositorios.json`.
+- **API:** `GET /api/repos` e `POST /api/repos` (adicionar/atualizar).
+- **MCP:** ferramentas `list_repos` e `add_repo`.
+- **Interface:** aba **Repositórios** do painel, com estrelas, licença, linguagem, MCP,
+  comando de instalação e link.
+
+O **LetsFG** foi adicionado ao catálogo com a ficha abaixo.
+
+### Ficha do LetsFG
+
+| Campo | Valor |
+|---|---|
+| Repositório | [LetsFG/LetsFG](https://github.com/LetsFG/LetsFG) |
+| Estrelas | ~2.230 (2026-11-05) |
+| Linguagem | Python |
+| Licença | NOASSERTION (custom — ler antes de uso comercial) |
+| MCP | `https://letsfg.co/mcp` |
+| Instalação | `pip install letsfg` |
+| Cobre | todas as companhias, OTAs e hotéis |
+| Booking | real, com PNR; a tarifa é reservada no cartão |
+| Busca | gratuita (token no letsfg.co/connect) |
+| Melhor para | agente que pesquisa **e reserva** com um único MCP |
+
+**Como usar no TripWatch:**
+
+1. Abra a aba **Repositórios** — a ficha do LetsFG já aparece.
+2. Copie a URL `https://letsfg.co/mcp`.
+3. Conecte esse MCP no Arena/Claude/Cursor.
+4. Peça ao agente para buscar `THE → POA` em 29/01/2027 e hotéis em Porto Alegre.
+5. O TripWatch continua como memória, agendador e alertas; o LetsFG entra como provedor
+   de preço/booking.
+
+> Sem token do LetsFG, o TripWatch usa o simulador. A pesquisa de
+> [THE → POA (29/01–01/02/2027)](./PESQUISA_THE-POA_2027.md) foi feita com referências
+> públicas, não com cotação ao vivo.
+
 ## Critérios usados
 
 1. **Fonte de preço**: API oficial, scraping ou simulador.
@@ -37,6 +78,10 @@ Estrelas, licenças e datas refletem o momento da consulta.
 | [mtnrabi/travel-agent-skills](https://github.com/mtnrabi/travel-agent-skills) | ~4 | skills | MIT | RapidAPI (FlightPowers) | fare watch | MCP/skills | sim |
 | [ruchirpipalia-spec/travel-agent](https://github.com/ruchirpipalia-spec/travel-agent) | 0 | Python | sem licença | SerpAPI | 24h | Telegram + Claude | sim |
 | **TripWatch AI (este repo)** | — | Python | MIT | SerpAPI ou simulador | loop interno por item | MCP + regras + LLM opcional | sim |
+
+> O catálogo completo, com 10 repositórios e metadados, está em
+> [`catalogo-repositorios.json`](./catalogo-repositorios.json) e na aba **Repositórios** do
+> TripWatch.
 
 > `itai-gendler/flight-finder` é um **fork** de `affromero/flight-finder` com 0 estrelas.
 > A fonte canônica é `affromero/flight-finder`.

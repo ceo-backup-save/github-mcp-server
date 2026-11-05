@@ -33,6 +33,8 @@ const ICONS = {
   arrowUp: '<path d="M12 19V5M5 12l7-7 7 7"/>',
   arrowDown: '<path d="M12 5v14M5 12l7 7 7-7"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/>',
+  layers: '<path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
 };
 
 function icon(name, size = 16) {
@@ -487,6 +489,56 @@ OPENAI_API_KEY=sk-...
   </div>`;
 }
 
+function repoCard(repo) {
+  const stars = repo.stars ? Number(repo.stars).toLocaleString("pt-BR") : "—";
+  return `<article class="card watch-card">
+    <div class="watch-top">
+      <div class="watch-title">
+        <div class="watch-icon">${icon("layers", 17)}</div>
+        <div style="min-width:0">
+          <h3>${esc(repo.name)}</h3>
+          <p>${esc(repo.category || repo.language || "repositório")}</p>
+        </div>
+      </div>
+      <span class="chip muted">★ ${stars}</span>
+    </div>
+    <p class="watch-reason" style="-webkit-line-clamp:3">${esc(repo.description)}</p>
+    <div class="watch-stats">
+      <div class="stat"><span>Linguagem</span><strong>${esc(repo.language || "—")}</strong></div>
+      <div class="stat"><span>Licença</span><strong>${esc(repo.license || "—")}</strong></div>
+      <div class="stat"><span>MCP</span><strong>${repo.mcp_url ? "sim" : "não"}</strong></div>
+    </div>
+    <div class="hint"><strong style="color:var(--text)">Melhor para:</strong> ${esc(repo.best_for || "—")}</div>
+    ${repo.install_cmd ? `<div class="code-block">${esc(repo.install_cmd)}<button class="btn btn-ghost btn-sm copy-btn" data-copy="${esc(repo.install_cmd)}">${icon("copy", 12)}</button></div>` : ""}
+    <div class="watch-foot">
+      <span class="watch-time">${repo.mcp_url ? `MCP: ${esc(repo.mcp_url)}` : "sem MCP"}</span>
+      <div class="watch-actions">
+        <a class="icon-btn" href="${esc(repo.url)}" target="_blank" rel="noopener" title="Abrir repositório">${icon("external", 15)}</a>
+      </div>
+    </div>
+  </article>`;
+}
+
+function viewRepos() {
+  const repos = state.data.repos || [];
+  const mcpCount = repos.filter((r) => r.mcp_url).length;
+  const permissive = repos.filter((r) => ["MIT", "Apache-2.0"].includes(r.license)).length;
+  const letsfg = repos.find((r) => r.name.toLowerCase().includes("letsfg"));
+  return `<div class="view">
+    <div class="kpi-grid">
+      ${kpiCard("blue", "Repositórios no catálogo", String(repos.length), "curadoria de ferramentas de viagem", "layers")}
+      ${kpiCard("green", "Servidores MCP", String(mcpCount), "conectáveis direto no agente", "external")}
+      ${kpiCard("amber", "Licenças permissivas", String(permissive), "MIT/Apache para uso comercial", "check")}
+      ${kpiCard("violet", "LetsFG", letsfg ? "no catálogo" : "pendente", "busca + booking com MCP", "sparkles")}
+    </div>
+    <div class="section-title">
+      <h2>Catálogo de repositórios</h2>
+      <button class="btn btn-primary btn-sm" data-action="add-repo">${icon("plus", 13)} Adicionar repositório</button>
+    </div>
+    <div class="watch-grid">${repos.map(repoCard).join("")}</div>
+  </div>`;
+}
+
 function renderView() {
   const root = $("#view-root");
   if (!state.data) {
@@ -499,6 +551,7 @@ function renderView() {
     hotels: () => viewList("hotel"),
     agent: viewAgent,
     alerts: viewAlerts,
+    repos: viewRepos,
     settings: viewSettings,
   };
   root.innerHTML = (views[state.view] || viewDashboard)();
@@ -514,6 +567,7 @@ function renderChrome() {
     hotels: ["Hotéis", "Diárias monitoradas com preço-alvo e recomendação de compra."],
     agent: ["Agente IA", "Converse, crie monitoramentos e peça análises em linguagem natural."],
     alerts: ["Alertas", "Tudo o que o agente detectou de relevante."],
+    repos: ["Repositórios", "Catálogo curado de ferramentas de viagem, MCPs e agentes."],
     settings: ["Configurações", "Provedor, agendador, MCP e preferências."],
   };
   const [title, subtitle] = titles[state.view] || titles.dashboard;
@@ -522,6 +576,7 @@ function renderChrome() {
   if (!d) return;
   $("#count-flights").textContent = d.stats.flights;
   $("#count-hotels").textContent = d.stats.hotels;
+  $("#count-repos").textContent = d.stats.repos || 0;
   const badge = $("#count-alerts");
   badge.textContent = d.stats.unread_alerts;
   badge.classList.toggle("zero", d.stats.unread_alerts === 0);
@@ -689,6 +744,51 @@ async function submitAddForm(event) {
   } catch (error) {
     errorEl.textContent = error.message;
     if (submit) { submit.disabled = false; submit.innerHTML = `${icon("sparkles", 14)} Começar a monitorar`; }
+  }
+}
+
+function openRepoModal() {
+  openModal(`<div class="modal-head">
+      <div><h2>Adicionar repositório</h2><p>Catálogo local de ferramentas de viagem, MCPs e agentes.</p></div>
+      <button class="modal-close" data-close="1" aria-label="Fechar">✕</button>
+    </div>
+    <form id="repo-form" class="form-grid" novalidate>
+      <div class="field full"><label>Nome</label><input name="name" required placeholder="LetsFG/LetsFG" /></div>
+      <div class="field full"><label>URL do GitHub</label><input name="url" type="url" required placeholder="https://github.com/owner/repo" /></div>
+      <div class="field full"><label>Descrição</label><input name="description" placeholder="O que o repositório faz" /></div>
+      <div class="field"><label>Categoria</label><input name="category" placeholder="voos e hotéis" /></div>
+      <div class="field"><label>Linguagem</label><input name="language" placeholder="Python" /></div>
+      <div class="field"><label>Licença</label><input name="license" placeholder="MIT" /></div>
+      <div class="field"><label>Estrelas</label><input name="stars" type="number" min="0" value="0" /></div>
+      <div class="field full"><label>URL MCP (opcional)</label><input name="mcp_url" placeholder="https://.../mcp" /></div>
+      <div class="field full"><label>Comando de instalação</label><input name="install_cmd" placeholder="pip install ..." /></div>
+      <div class="field full"><label>Melhor para</label><input name="best_for" placeholder="Quando usar este repositório" /></div>
+      <div class="form-error" id="repo-error"></div>
+      <div class="modal-actions" style="grid-column:1/-1">
+        <button type="button" class="btn btn-ghost" data-close="1">Cancelar</button>
+        <button type="submit" class="btn btn-primary">${icon("plus", 14)} Adicionar ao catálogo</button>
+      </div>
+    </form>`);
+  const form = $("#repo-form");
+  if (form) form.addEventListener("submit", submitRepoForm);
+}
+
+async function submitRepoForm(event) {
+  event.preventDefault();
+  const form = event.target;
+  const payload = Object.fromEntries(new FormData(form).entries());
+  payload.stars = Number(payload.stars || 0);
+  const errorEl = $("#repo-error");
+  const submit = form.querySelector('button[type="submit"]');
+  if (submit) { submit.disabled = true; submit.textContent = "Salvando…"; }
+  try {
+    await api("/api/repos", { method: "POST", body: JSON.stringify(payload) });
+    closeModal();
+    toast("Repositório adicionado ao catálogo.");
+    await load();
+  } catch (error) {
+    if (errorEl) errorEl.textContent = error.message;
+    if (submit) { submit.disabled = false; submit.innerHTML = `${icon("plus", 14)} Adicionar ao catálogo`; }
   }
 }
 
@@ -926,6 +1026,7 @@ document.addEventListener("click", async (event) => {
 
   switch (action) {
     case "add": openAddModal(actionEl.dataset.kind || "flight"); break;
+    case "add-repo": openRepoModal(); break;
     case "set-add-kind": {
       state.addKind = actionEl.dataset.kind;
       $$("#add-form .segmented button").forEach((b) => b.classList.toggle("active", b.dataset.kind === state.addKind));

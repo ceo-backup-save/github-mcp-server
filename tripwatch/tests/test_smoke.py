@@ -27,9 +27,9 @@ class TripWatchSmokeTest(unittest.TestCase):
 
     def test_seed_creates_demo_watchlists(self):
         watches = db.list_watches()
-        self.assertEqual(len(watches), 5)
-        self.assertEqual(sum(1 for w in watches if w["kind"] == "flight"), 3)
-        self.assertEqual(sum(1 for w in watches if w["kind"] == "hotel"), 2)
+        self.assertEqual(len(watches), 11)
+        self.assertEqual(sum(1 for w in watches if w["kind"] == "flight"), 4)
+        self.assertEqual(sum(1 for w in watches if w["kind"] == "hotel"), 7)
         for watch in watches:
             self.assertGreater(len(watch["snapshots"]), 10)
             self.assertGreater(watch["last_price"], 0)
@@ -104,10 +104,30 @@ class TripWatchSmokeTest(unittest.TestCase):
 
     def test_state_payload_shape(self):
         state = app.state_payload()
-        for key in ("watches", "alerts", "settings", "provider", "scheduler", "briefing", "stats"):
+        for key in ("watches", "alerts", "repos", "settings", "provider", "scheduler", "briefing", "stats"):
             self.assertIn(key, state)
         self.assertIn("potential_savings", state["stats"])
+        self.assertIn("repos", state["stats"])
         self.assertIn("text", state["briefing"])
+
+    def test_repo_catalog_has_letsfg(self):
+        repos = db.list_repos()
+        letsfg = next((r for r in repos if r["name"] == "LetsFG/LetsFG"), None)
+        self.assertIsNotNone(letsfg)
+        self.assertIn("letsfg.co/mcp", letsfg["mcp_url"])
+        self.assertIn("pip install letsfg", letsfg["install_cmd"])
+        self.assertGreaterEqual(len(repos), 10)
+
+    def test_add_repo_upsert(self):
+        db.add_repo({"name": "Teste/Repo", "url": "https://github.com/teste/repo", "stars": 5, "license": "MIT"})
+        db.add_repo({"name": "Teste/Repo", "url": "https://github.com/teste/repo", "stars": 9, "license": "MIT"})
+        repo = next(r for r in db.list_repos() if r["url"] == "https://github.com/teste/repo")
+        self.assertEqual(repo["stars"], 9)
+
+    def test_mcp_list_repos(self):
+        result = app.mcp_call_tool("list_repos", {})
+        self.assertGreaterEqual(result["count"], 10)
+        self.assertIn("LetsFG/LetsFG", [r["name"] for r in result["repos"]])
 
     def test_mcp_unknown_tool_returns_error(self):
         with self.assertRaises(ValueError):

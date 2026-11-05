@@ -12,6 +12,8 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterable
 
+from catalog import REPOS
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.environ.get("TRIPWATCH_DB", os.path.join(BASE_DIR, "data", "tripwatch.db"))
 
@@ -73,6 +75,21 @@ CREATE TABLE IF NOT EXISTS runs (
 CREATE TABLE IF NOT EXISTS settings (
     key   TEXT PRIMARY KEY,
     value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS repos (
+    id          TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    url         TEXT NOT NULL UNIQUE,
+    description TEXT,
+    category    TEXT,
+    language    TEXT,
+    license     TEXT,
+    stars       INTEGER DEFAULT 0,
+    mcp_url     TEXT,
+    install_cmd TEXT,
+    best_for    TEXT,
+    added_at    TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_snapshots_watch ON snapshots(watch_id, found_at);
@@ -368,6 +385,7 @@ def seed(force: bool = False) -> None:
         for key, value in DEFAULT_SETTINGS.items():
             conn.execute("INSERT OR IGNORE INTO settings(key, value) VALUES(?,?)", (key, value))
         conn.commit()
+    seed_repos()
     if force:
         with connect() as conn:
             conn.executescript("DELETE FROM alerts; DELETE FROM snapshots; DELETE FROM watches; DELETE FROM runs;")
@@ -400,6 +418,38 @@ def seed(force: bool = False) -> None:
             "kind": "hotel", "title": "Hotel no Rio de Janeiro", "hotel_name": "Santa Clara",
             "city": "Rio de Janeiro", "checkin": _date(20), "checkout": _date(24), "guests": 2, "rooms": 1,
             "target_price": 580, "base_price": 690, "interval_minutes": 240,
+        },
+        # Pesquisa THE → POA (29/01/2027 a 01/02/2027) — referências de mercado
+        {
+            "kind": "flight", "title": "Teresina → Porto Alegre (29/01–01/02)",
+            "origin": "THE", "destination": "POA",
+            "depart_date": "2027-01-29", "return_date": "2027-02-01", "cabin": "economy",
+            "target_price": 900, "base_price": 1050, "interval_minutes": 180,
+        },
+        {
+            "kind": "hotel", "title": "Eko Residence Hotel", "hotel_name": "Eko Residence Hotel",
+            "city": "Porto Alegre", "checkin": "2027-01-29", "checkout": "2027-02-01",
+            "guests": 2, "rooms": 1, "target_price": 300, "base_price": 151, "interval_minutes": 180,
+        },
+        {
+            "kind": "hotel", "title": "Intercity Porto Alegre Aeroporto", "hotel_name": "Intercity Porto Alegre Aeroporto",
+            "city": "Porto Alegre", "checkin": "2027-01-29", "checkout": "2027-02-01",
+            "guests": 2, "rooms": 1, "target_price": 300, "base_price": 194, "interval_minutes": 180,
+        },
+        {
+            "kind": "hotel", "title": "Hotel Praça da Matriz", "hotel_name": "Hotel Praça da Matriz",
+            "city": "Porto Alegre", "checkin": "2027-01-29", "checkout": "2027-02-01",
+            "guests": 2, "rooms": 1, "target_price": 300, "base_price": 220, "interval_minutes": 180,
+        },
+        {
+            "kind": "hotel", "title": "Novotel Porto Alegre Três Figueiras", "hotel_name": "Novotel Porto Alegre Três Figueiras",
+            "city": "Porto Alegre", "checkin": "2027-01-29", "checkout": "2027-02-01",
+            "guests": 2, "rooms": 1, "target_price": 300, "base_price": 220, "interval_minutes": 180,
+        },
+        {
+            "kind": "hotel", "title": "Hotel Laghetto Viverone Moinhos", "hotel_name": "Hotel Laghetto Viverone Moinhos",
+            "city": "Porto Alegre", "checkin": "2027-01-29", "checkout": "2027-02-01",
+            "guests": 2, "rooms": 1, "target_price": 300, "base_price": 272, "interval_minutes": 180,
         },
     ]
 
@@ -449,3 +499,74 @@ def _seed_history(watch: dict) -> None:
 
 def init() -> None:
     seed(force=False)
+
+
+# --------------------------------------------------------------------------- #
+# Catálogo de repositórios
+# --------------------------------------------------------------------------- #
+
+def list_repos() -> list[dict]:
+    return query("SELECT * FROM repos ORDER BY stars DESC, name ASC")
+
+
+def get_repo(repo_id: str) -> dict | None:
+    return query_one("SELECT * FROM repos WHERE id = ?", (repo_id,))
+
+
+def add_repo(data: dict) -> dict:
+    name = str(data.get("name") or "").strip()
+    url = str(data.get("url") or "").strip()
+    if not name or not url:
+        raise ValueError("Informe name e url.")
+    if not url.startswith(("http://", "https://")):
+        raise ValueError("A url deve começar com http:// ou https://.")
+    repo = {
+        "id": str(data.get("id") or new_id("repo")),
+        "name": name,
+        "url": url,
+        "description": data.get("description") or "",
+        "category": data.get("category") or "outros",
+        "language": data.get("language") or "",
+        "license": data.get("license") or "",
+        "stars": int(data.get("stars") or 0),
+        "mcp_url": data.get("mcp_url") or "",
+        "install_cmd": data.get("install_cmd") or "",
+        "best_for": data.get("best_for") or "",
+        "added_at": now_iso(),
+    }
+    with connect() as conn:
+        conn.execute(
+            """INSERT INTO repos(id, name, url, description, category, language, license,
+                                  stars, mcp_url, install_cmd, best_for, added_at)
+               VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+               ON CONFLICT(url) DO UPDATE SET
+                 name = excluded.name,
+                 description = excluded.description,
+                 category = excluded.category,
+                 language = excluded.language,
+                 license = excluded.license,
+                 stars = excluded.stars,
+                 mcp_url = excluded.mcp_url,
+                 install_cmd = excluded.install_cmd,
+                 best_for = excluded.best_for""",
+            tuple(repo.values()),
+        )
+        conn.commit()
+    return query_one("SELECT * FROM repos WHERE url = ?", (url,))
+
+
+def seed_repos() -> None:
+    for repo in REPOS:
+        with connect() as conn:
+            conn.execute(
+                """INSERT OR IGNORE INTO repos(id, name, url, description, category, language,
+                                              license, stars, mcp_url, install_cmd, best_for, added_at)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
+                (
+                    repo["id"], repo["name"], repo["url"], repo.get("description", ""),
+                    repo.get("category", ""), repo.get("language", ""), repo.get("license", ""),
+                    repo.get("stars", 0), repo.get("mcp_url", ""), repo.get("install_cmd", ""),
+                    repo.get("best_for", ""), now_iso(),
+                ),
+            )
+            conn.commit()

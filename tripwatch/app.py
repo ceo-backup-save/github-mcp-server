@@ -159,6 +159,31 @@ MCP_TOOLS = [
         "inputSchema": {"type": "object", "properties": {"limit": {"type": "integer", "minimum": 1, "maximum": 100}}},
     },
     {
+        "name": "list_repos",
+        "description": "Lista o catálogo de repositórios de viagem do TripWatch (LetsFG, flight-finder, trvl etc.).",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "add_repo",
+        "description": "Adiciona ou atualiza um repositório no catálogo do TripWatch.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "url": {"type": "string"},
+                "description": {"type": "string"},
+                "category": {"type": "string"},
+                "language": {"type": "string"},
+                "license": {"type": "string"},
+                "stars": {"type": "integer", "minimum": 0},
+                "mcp_url": {"type": "string"},
+                "install_cmd": {"type": "string"},
+                "best_for": {"type": "string"},
+            },
+            "required": ["name", "url"],
+        },
+    },
+    {
         "name": "update_target",
         "description": "Atualiza o preço-alvo de um watchlist.",
         "inputSchema": {
@@ -203,9 +228,11 @@ def state_payload() -> dict:
         if w.get("target_price") and w["analysis"]["current"] <= float(w["target_price"]) * 1.01
     ]
     potential = sum(w["analysis"].get("savings_vs_target") or 0 for w in with_data)
+    repos = db.list_repos()
     return {
         "watches": enriched,
         "alerts": alerts,
+        "repos": repos,
         "settings": db.all_settings(),
         "provider": provider_status(),
         "scheduler": {
@@ -225,6 +252,7 @@ def state_payload() -> dict:
             "potential_savings": round(potential, 2),
             "snapshots": db.query_one("SELECT COUNT(*) AS c FROM snapshots")["c"],
             "currency": db.get_setting("currency", "BRL"),
+            "repos": len(repos),
         },
         "server_time": db.now_iso(),
     }
@@ -343,6 +371,10 @@ def mcp_call_tool(name: str, arguments: dict) -> dict:
         return briefing
     if name == "list_alerts":
         return {"alerts": db.list_alerts(limit=int(args.get("limit", 20)))}
+    if name == "list_repos":
+        return {"repos": db.list_repos(), "count": len(db.list_repos())}
+    if name == "add_repo":
+        return {"repo": db.add_repo(args)}
     if name == "update_target":
         watch = db.update_watch(args.get("watch_id", ""), {"target_price": args.get("target_price")})
         if not watch:
@@ -483,6 +515,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/runs":
             self._json(200, {"runs": db.recent_runs(20)})
             return
+        if path == "/api/repos":
+            self._json(200, {"repos": db.list_repos()})
+            return
         if path == "/mcp":
             self._json(200, {
                 "name": "tripwatch-ai",
@@ -547,6 +582,15 @@ class Handler(BaseHTTPRequestHandler):
                 if key in db.DEFAULT_SETTINGS:
                     db.set_setting(key, value)
             self._json(200, {"ok": True, "settings": db.all_settings()})
+            return
+
+        if path == "/api/repos":
+            try:
+                repo = db.add_repo(payload)
+            except ValueError as exc:
+                self._json(400, {"error": str(exc)})
+                return
+            self._json(201, {"repo": repo})
             return
 
         if path == "/api/reset-demo":

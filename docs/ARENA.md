@@ -72,6 +72,20 @@ npx mcp-remote https://<host-do-preview>/mcp
 > Em produção, coloque o `/mcp` atrás de HTTPS e autenticação. O painel e o MCP não têm
 > login próprio nesta versão.
 
+## Catálogo de repositórios
+
+A aba **Repositórios** do painel já inclui o **LetsFG/LetsFG** (`https://letsfg.co/mcp`,
+`pip install letsfg`) e mais 9 ferramentas. O catálogo é servido por:
+
+- `GET /api/repos` — lista;
+- `POST /api/repos` — adiciona/atualiza;
+- MCP `list_repos` e `add_repo`;
+- arquivo exportado `docs/catalogo-repositorios.json`.
+
+Para o agente usar o LetsFG como provedor de preço/booking, conecte
+`https://letsfg.co/mcp` como MCP no Arena/Claude/Cursor. O TripWatch continua como memória,
+agendador e alertas.
+
 ## Opção C — rodar 24/7 (Docker)
 
 ```bash
